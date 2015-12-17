@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FLEXI..Node Webkit</title>
+    <script src="../js/jquery_min_1.11.3.js"></script>
+    <script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+    <script type="text/javascript">
+    //get node webkit GUI
+    //get node webkit GUI
+    var gui = require('nw.gui');
+ 
+         // get the window object
+    var win = gui.Window.get();
+    var menubar = new gui.Menu({
+        type: 'menubar'
+    });
+ 
+    var file = new gui.Menu();
+    var subMenu = new gui.Menu();
+ 
+    file.append(new gui.MenuItem({
+        label: 'Action 1',
+        click: function() {
+            alert('Action 1 Clicked');
+        }
+    }));
+ 
+    file.append(new gui.MenuItem({
+        label: 'Action 2',
+        click: function() {
+            alert('Action 2 Clicked');
+        }
+    }));
+ 
+    subMenu.append(new gui.MenuItem({
+        label: 'SubMenu Action 1',
+        click: function() {
+            alert('SubMenu Action 1 Clicked');
+        }
+    }));
+ 
+    subMenu.append(new gui.MenuItem({
+        label: 'SubMenu Action 2',
+        click: function() {
+            window.alert('SubMenu Action 2 Clicked');
+        }
+    }));
+ 
+    menubar.append(new gui.MenuItem({ label: 'File', submenu: file}));
+    file.append(new gui.MenuItem({ label: 'Sub Action Menu', submenu: subMenu}));
+ 
+    win.menu = menubar;
+
+    console.log('This platform is ' + process.platform);
+
+    // Clipboard
+// We can not create a clipboard, we have to receive the system clipboard
+var clipboard = gui.Clipboard.get();
+ 
+// Read from clipboard
+var text = clipboard.get('text');
+console.log('Clipboard text : '+text);
+
+
+
+var pg = require('pg');
+var conString = "postgres://flexi_app:flexi_app@localhost/flexi";
+var client = new pg.Client(conString);
+client.connect();
+
+
+var query = client.query('SELECT * FROM dev."OR"');
+query.on("row", function (row, result) {
+    result.addRow(row);
+});
+query.on("end", function (result) {
+    var queryData=result.rows;
+    //var queryRslt=JSON.stringify(result.rows, null, "    ");
+$(document).ready(function() {
+    
+$('#example').dataTable({
+    "bProcessing":true,
+    "aaData": queryData,
+        "aoColumns": [{
+        "mData": "or_id"}, 
+        {"mData": "name"}]
+});
+
+} );
+
+
+    client.end();
+});
+
+
+
+//Query PG Database
+
+function ExecuteQuery(sQuery,sResult){
+
+    var pog = require('pg');
+    var conString = "postgres://flexi_app:flexi_app@localhost/flexi";
+    var client = new pog.Client(conString);
+    client.connect();
+    var query = client.query(sQuery);
+    
+    query.on("row", function (row, result) {
+        result.addRow(row);
+    });
+
+    var arrRtrn=query.on("end", function (result) {
+        queryData=result.rows;
+        sResult(queryData);
+        client.end();
+     });
+
+}
+
+var QueryTO=('SELECT * FROM dev."OR"');
+ExecuteQuery(QueryTO,function(queryResult){
+    return(queryResult);
+});
+
+
+
+
+
+
+
+
+    </script>
+</head>
+<body>
+    <h1>Test Steps</h1>
+
+
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>OR_ID</th>
+                <th>NAME</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>OR_ID</th>
+                <th>NAME</th>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

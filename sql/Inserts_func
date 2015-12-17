@@ -1,0 +1,37 @@
+(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']).split("\\")[2];
+
+
+func_id serial NOT NULL,
+  app integer,
+  env character(10), -- stores value like UFT, LEANFT or JAVA
+  function_name character(60), -- name of function
+  "desc" character varying, -- description of function
+  type character(20), -- category like Web,Misc etc.
+  
+  
+  INSERT INTO dev.func(
+            func_id, app, script_env, function_name, "desc", category)
+    VALUES 
+	(default, default, 1, 'VerifyWebElement', 'Verifies the label of <Test object name> matches the expected result <ExpectedResult>. Value of res_type should be "text" or "Date". If res_type is "Date"  ExpectedResult can be "Today" , "Future" or  an any date.','Web'),
+	(default, default, 1, 'VerifyWebElementLength', 'Verify that the length of the <Test object name> name matches the expected result <ExpectedResult>','Web')
+	(default, default, 1, 'checkObjDisplayed', 'Verify that the object <Test object name> is visible on the web page.','Web');
+
+	
+	INSERT INTO dev.func_obj_typ(
+            func_obj_typ_id, func_id, reg_on, reg_name, ui_disp_name)
+    VALUES 
+	(default, 1,5,'Verify','Verify Label'),
+	(default, 1,5,'VerifyLen','Verify Length'),
+	(default, 1,5,'IsDisplayed','Is Displayed')
+	;
+	
+   ui_required boolean DEFAULT false i.e. 'f'
+  func_required boolean DEFAULT true i.e  't'
+	
+	
+INSERT INTO dev.func_param(
+        param_id,func_id, param_name      , param_desc      , ui_text       , ui_required , func_required,dflt_value,ui_obj_typ,ui_obj_val)
+VALUES (default,1       ,'oTestObject'    ,'Test Object'    ,  ''           ,'f'          ,'t'           ,default    ,default   ,default   ),
+	   (default,1       ,'sExpectedResult','Expected Value' ,'Expected Result','t'        ,'t'           ,default    ,'EditBox' ,'innertext' ),     
+	   (default,1       ,'sResultType'    ,'text or Date'   ,''              ,'t'         ,'t'           ,'text;date','DropDown',default    ),
+	   (default,1       ,'sStepName'      ,'Step Name'      ,''              ,'f'         ,'t'           ,default    ,default,  default);

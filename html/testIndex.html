@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FLEXI..Node Webkit</title>
+    <script src="../js/jquery_min_1.11.3.js"></script>
+    <script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+    <script type="text/javascript">
+   
+var pg = require('pg');
+var conString = "postgres://flexi_app:flexi_app@localhost/flexi";
+var client = new pg.Client(conString);
+client.connect();
+
+
+////AJAX Interactions///
+var oReq = new XMLHttpRequest();
+oReq.onload = function () {
+  console.log("status: " + this.status);
+};
+oReq.open("get", "app://something.html", true);
+oReq.send();
+
+
+////AJAX END
+
+
+
+var query = client.query('SELECT * FROM dev."OR"');
+query.on("row", function (row, result) {
+    result.addRow(row);
+});
+query.on("end", function (result) {
+    var queryData=result.rows;
+    //var queryRslt=JSON.stringify(result.rows, null, "    ");
+
+$(document).ready(function() {
+    
+$('#example').dataTable({
+    "bProcessing":true,
+    "aaData": queryData,
+        "aoColumns": [{
+        "mData": "or_id"}, 
+        {"mData": "name"}]
+});
+
+} );
+    client.end();
+});
+
+
+
+</script>
+</head>
+<body>
+    <h1>Test Steps</h1>
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>OR_ID</th>
+                <th>NAME</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>OR_ID</th>
+                <th>NAME</th>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

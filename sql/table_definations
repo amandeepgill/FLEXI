@@ -1,0 +1,6 @@
+CREATE TABLE dev."OR"
+(
+OR_ID  serial PRIMARY KEY,
+Name varchar(255) NOT NULL
+);
+
